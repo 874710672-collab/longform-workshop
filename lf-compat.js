@@ -13,7 +13,7 @@
         temperature: c.temperature,
         maxTokens: c.maxTokens,
         stream: c.stream,
-        noThinking: c.noThinking
+        thinkingMode: c.thinkingMode || 'off'
       };
     }
   };
