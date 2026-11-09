@@ -4,7 +4,7 @@
      其他家的模型不传 reasoning_effort，避免服务端不认识该参数而报 400。 */
   function isThinkingModel(model) {
     const m = String(model || '').toLowerCase();
-    return /doubao-seed/.test(m) || /^seed-/.test(m) || /doubao.*(2-[01]|seed)/.test(m);
+    return /doubao|seed|deepseek-v4|deepseek-flash|deepseek-reasoner|glm-5|kimi|qwen.*thinking|qwq/.test(m);
   }
 
   function buildMessages(system, user) {
@@ -30,9 +30,14 @@
     // 显式指定输出上限；不指定时很多模型会默认 4096/8192，长文会被截断
     const mt = maxTokens || cfg.maxTokens;
     if (mt) body.max_tokens = mt;
-    // 只有确定支持「深度思考」的模型才传这个参数，其他家传了会 400
-    if (cfg.noThinking !== false && isThinkingModel(cfg.model)) {
-      body.reasoning_effort = 'minimal';
+    // ---- 思考模式控制 ----
+    // 关闭：不发任何参数 ⇒ 服务端默认开启思考（DeepSeek 新版、豆包 seed 都是这样），
+    // 所以「关闭」必须显式发 disabled。
+    const mode = cfg.thinkingMode || 'off';   // off | auto | none
+    const sendThinking = mode === 'off' || (mode === 'auto' && isThinkingModel(cfg.model));
+    if (sendThinking) {
+      body.thinking = { type: 'disabled' };
+      body.reasoning_effort = 'none';
     }
     if (jsonMode) body.response_format = { type: 'json_object' };
 
