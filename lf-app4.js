@@ -3,6 +3,11 @@
   const $ = window.$, el = window.el;
   const LF = window.LF, A = () => window.LF_APP.A;
 
+  function closeDrawer() {
+    const b = document.getElementById('arcList');
+    if (b) b.classList.remove('open');
+  }
+
   /* ---------- 段列表（侧栏） ---------- */
   function renderArcList() {
     const p = A().project;
@@ -16,7 +21,7 @@
     head.appendChild(el('span', '', '阶段'));
     const nb = el('button', 'icon-btn', '＋');
     nb.title = '新建下一段';
-    nb.onclick = () => window.LF_ACT.newArc();
+    nb.onclick = () => { closeDrawer(); window.LF_ACT.newArc(); };
     head.appendChild(nb);
     box.appendChild(head);
 
@@ -28,7 +33,7 @@
       mid.appendChild(el('div', 'al-title', a.title));
       mid.appendChild(el('div', 'al-sub', done ? '已完成' : (LF.STEP_NAME[a.step] || '')));
       row.appendChild(mid);
-      row.onclick = () => window.LF_ACT.switchArc(i);
+      row.onclick = () => { closeDrawer(); window.LF_ACT.switchArc(i); };
       box.appendChild(row);
     });
 
@@ -38,7 +43,7 @@
     bm.appendChild(el('div', 'al-title', '全书档案'));
     bm.appendChild(el('div', 'al-sub', p.premise.oneLine ? '已填' : '未填'));
     bk.appendChild(bm);
-    bk.onclick = () => { A().view = 'book'; LF_APP.render(); };
+    bk.onclick = () => { closeDrawer(); A().view = 'book'; LF_APP.render(); };
     box.appendChild(bk);
   }
 
@@ -170,24 +175,35 @@
   }
 
   /* ---------- 启动 ---------- */
+  function on(id, fn) {
+    const e = document.getElementById(id);
+    if (e) e.onclick = fn;
+    else console.warn('[lf] 缺少元素 #' + id);
+  }
+
   function boot() {
-    $('#btnHome').onclick = () => { A().project = null; A().view = 'home'; window.LF_APP.render(); };
-    $('#btnBack').onclick = () => { A().project = null; A().view = 'home'; window.LF_APP.render(); };
-    $('#btnSet').onclick = openSettings;
-    $('#btnExport').onclick = () => {
+    const goHome = () => { A().project = null; A().view = 'home'; window.LF_APP.render(); };
+    on('btnHome', goHome);
+    on('btnBack', goHome);
+    on('btnSet', openSettings);
+    on('btnExport', () => {
       if (!A().project) return;
       const want = confirm('导出整本书 JSON？\n\n取消 = 只导出当前段正文');
       if (want) window.LF_EXPORT.project(); else window.LF_EXPORT.arcText();
-    };
-    $('#btnImport').onclick = importProject;
+    });
+    on('btnImport', importProject);
 
-    // 侧栏
-    const toggle = $('#btnArcs');
-    if (toggle) toggle.onclick = () => {
-      const b = $('#arcList');
+    on('btnArcs', () => {
+      const b = document.getElementById('arcList');
       if (!b) return;
       b.classList.toggle('open');
-    };
+    });
+
+    // 点侧栏外的空白处收起
+    document.getElementById('stage').addEventListener('click', () => {
+      const b = document.getElementById('arcList');
+      if (b && b.classList.contains('open')) b.classList.remove('open');
+    });
 
     // 从 URL 导入配置（?base=&key=&model=）方便首发
     const q = new URLSearchParams(location.search);
@@ -200,22 +216,17 @@
     }
 
     window.LF_APP.render();
-    renderArcListHook();
+    renderArcList();
   }
 
-  /* 每次渲染后刷新段列表 */
-  function renderArcListHook() {
-    const orig = window.LF_APP.renderStage;
-    window.LF_APP.renderStage = function () {
-      orig.apply(this, arguments);
-      renderArcList();
-    };
-  }
+  /* 每次渲染后刷新段列表：由 lf-app1 的 render() 直接调用 */
+  window.LF_RENDER_ARCS = renderArcList;
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', boot);
   } else {
     boot();
   }
+  window.LF_BOOT = boot;
   window.LF_SETTINGS = { open: openSettings };
 })();
