@@ -62,6 +62,10 @@
     renderNav();
     renderStage();
     renderDock();
+    // 侧栏（由 lf-app4 提供，未加载时跳过）
+    if (typeof window.LF_RENDER_ARCS === 'function') {
+      try { window.LF_RENDER_ARCS(); } catch (e) { console.warn('arcList', e); }
+    }
   }
 
   function renderTop() {
