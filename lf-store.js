@@ -143,13 +143,14 @@
       return Object.assign({
         baseUrl: 'https://api.deepseek.com',
         apiKey: '',
-        model: 'deepseek-chat',
+        model: 'deepseek-flash',
+        thinkingMode: 'off',
         temperature: 0.85,
         maxTokens: 8192,
         stream: true,
         candidates: 1
       }, JSON.parse(localStorage.getItem(CFG_KEY) || '{}'));
-    } catch (e) { return { baseUrl: 'https://api.deepseek.com', model: 'deepseek-chat', temperature: 0.85, maxTokens: 8192, stream: true, candidates: 1 }; }
+    } catch (e) { return { baseUrl: 'https://api.deepseek.com', model: 'deepseek-flash', thinkingMode: 'off', temperature: 0.85, maxTokens: 8192, stream: true, candidates: 1 }; }
   }
 
   function saveCfg(c) {
