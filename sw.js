@@ -1,7 +1,7 @@
 /* sw.js — 网络优先，离线可读
    改版本号即可强制清旧缓存（每次部署改 CACHE 数字 + index.html 里的 ?v=）
 */
-const CACHE = 'longform-v1';
+const CACHE = 'longform-v2';
 const ASSETS = [
   './',
   './index.html',
