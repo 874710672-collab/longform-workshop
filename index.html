@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>长篇工坊</title>
+<meta name="theme-color" content="#111013">
+<meta name="color-scheme" content="dark">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="长篇工坊">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="stylesheet" href="lf-style.css">
+</head>
+<body>
+<header id="topbar">
+  <div class="tb-left">
+    <button class="icon-btn" id="btnBack" title="返回项目列表">☰</button>
+    <div class="tb-title">
+      <span id="tbProject">长篇工坊</span>
+      <small id="tbSub">选择或新建一部长篇</small>
+    </div>
+  </div>
+  <div class="tb-right">
+    <button class="ghost-btn" id="btnArcs" title="阶段列表">阶段</button>
+    <button class="ghost-btn" id="btnImport" title="导入项目">导入</button>
+    <button class="ghost-btn" id="btnExport" title="导出">导出</button>
+    <button class="icon-btn" id="btnSet" title="设置">⚙︎</button>
+  </div>
+</header>
+
+<div id="layout">
+  <aside id="arcList" hidden></aside>
+  <nav id="steps" hidden></nav>
+  <main id="stage"></main>
+</div>
+
+<footer id="dock" hidden>
+  <div class="dock-info" id="dockInfo">—</div>
+  <div class="dock-acts"></div>
+</footer>
+
+<script src="lf-store.js"></script>
+<script src="lf-compat.js"></script>
+<script src="api.js"></script>
+<script src="check.js"></script>
+<script src="lf-prompts.js"></script>
+<script src="lf-tidy.js"></script>
+<script src="lf-engine.js"></script>
+<script src="lf-app1.js?v=10"></script>
+<script src="lf-app2.js"></script>
+<script src="lf-app3.js"></script>
+<script src="lf-app4.js?v=11"></script>
+<script src="lf-boot.js?v=11"></script>
+<script>
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
+</script>
+</body>
+</html>
