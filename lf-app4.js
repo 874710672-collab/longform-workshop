@@ -87,6 +87,27 @@
     f4.appendChild(sw);
     panel.appendChild(f4);
 
+    // 思考模式
+    const f5 = el('div', 'field');
+    f5.appendChild(el('label', '', '思考模式'));
+    const tm = el('select');
+    [
+      ['off', '关闭思考（推荐）· 发 thinking:disabled'],
+      ['auto', '自动判断 · 只对支持的模型关闭'],
+      ['none', '不发任何参数 · 完全交给服务端']
+    ].forEach(([v, t]) => {
+      const o = el('option', '', t);
+      o.value = v;
+      if ((c.thinkingMode || 'off') === v) o.selected = true;
+      tm.appendChild(o);
+    });
+    f5.appendChild(tm);
+    const tip = el('p', 'hint',
+      'DeepSeek 新版（v4 / flash）和豆包 seed 系列默认都开着思考，不关会慢、贵，还可能把思考混进正文。');
+    tip.style.margin = '6px 0 0';
+    f5.appendChild(tip);
+    panel.appendChild(f5);
+
     const act = el('div', 'row');
     const test = el('button', 'ghost-btn', '测试连接');
     test.onclick = async () => {
@@ -108,7 +129,8 @@
         apiKey: inputs.apiKey.value.trim(),
         model: inputs.model.value.trim(),
         candidates: +sel.value,
-        stream: sw.checked
+        stream: sw.checked,
+        thinkingMode: tm.value
       });
       LF.saveCfg(nc);
       mask.remove();
